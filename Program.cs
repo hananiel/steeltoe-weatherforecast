@@ -1,7 +1,9 @@
 using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using Steeltoe.Management.Endpoint;
+using Steeltoe.Management.Prometheus;
 using Steeltoe.Management.Tracing;
+using Steeltoe.Management.Wavefront;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,15 +13,18 @@ var url = string.Concat("http://0.0.0.0:", port);
 builder.WebHost.UseUrls(url);
 
 // Learn more about management endpoints at https://docs.steeltoe.io/api/v3/management/
-builder.WebHost.AddAllActuators();
+//builder.WebHost.AddAllActuators();
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddAllActuators();
+builder.Services.ActivateActuatorEndpoints();
+builder.Services.AddPrometheusActuator();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddWavefrontMetrics();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -36,5 +41,6 @@ app.UseFileServer(new FileServerOptions
     RequestPath = "",
 });
 
+app.MapPrometheusActuator();
 app.MapControllers();
 app.Run();
