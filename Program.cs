@@ -11,10 +11,12 @@ var url = string.Concat("http://0.0.0.0:", port);
 builder.WebHost.UseUrls(url);
 
 // Learn more about management endpoints at https://docs.steeltoe.io/api/v3/management/
-builder.WebHost.AddAllActuators();
+//builder.WebHost.AddAllActuators();
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddAllActuators();
+builder.Services.ActivateActuatorEndpoints();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
